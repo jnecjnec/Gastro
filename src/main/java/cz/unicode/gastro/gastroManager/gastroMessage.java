@@ -1,11 +1,12 @@
-package cz.unicode.gastro.tcpip.message;
+package cz.unicode.gastro.gastroManager;
 
-public class message {
-	public enum messageType {
-		mtUnknown, mtResponse, mtGastro
+public class gastroMessage {
+	
+	public enum gastroMessageType {
+		gmtUnknown, gmtTable, gmtItem
 	};
 
-	private messageType msgType = messageType.mtUnknown;
+	private gastroMessageType msgType = gastroMessageType.gmtUnknown;
 	private Object object = null;
 	
 	public Object getObject() {
@@ -20,14 +21,15 @@ public class message {
 	/**
 	 * @return the msgType
 	 */
-	public messageType getMsgType() {
+	public gastroMessageType getMsgType() {
 		return msgType;
 	}
 
 	/**
 	 * @param msgType the msgType to set
 	 */
-	public void setMsgType(messageType msgType) {
+	public void setMsgType(gastroMessageType msgType) {
 		this.msgType = msgType;
 	}	
+
 }
