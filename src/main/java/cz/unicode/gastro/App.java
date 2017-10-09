@@ -1,6 +1,5 @@
 package cz.unicode.gastro;
 
-import java.io.IOException;
 
 import org.slf4j.Logger;
 
@@ -12,12 +11,30 @@ import cz.unicode.gastro.injector.AppInjector;
 import cz.unicode.gastro.model.table.tableimpl;
 import cz.unicode.gastro.tcpip.tcpipclient.tcpipclient;
 import cz.unicode.gastro.tcpip.tcpipserver.tcpipserver;
+import javafx.application.Application;
+import static javafx.application.Application.launch;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 /**
  * Gastro table manager
  *
  */
-public class App {
+public class App extends Application{
+    
+     @Override
+    public void start(Stage stage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("FXML.fxml"));
+       
+
+        Scene scene = new Scene(root);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+
 
 	public static void main(String[] args) {
 
@@ -44,15 +61,10 @@ public class App {
 			ta.setUserId(123);
 			gastromanager.addTable(ta);
 		}
+                
+                launch(args);
 
-		//if (configuration.isServer()) {
-		   try {
-			System.in.read();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		//}
+		
 
 		if (configuration.isServer()) {
 			server.serverStop();
@@ -62,4 +74,5 @@ public class App {
 
 		logger.info("Finish application");
 	}
+
 }
