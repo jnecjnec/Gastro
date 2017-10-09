@@ -3,7 +3,7 @@ package cz.unicode.gastro;
 public class configuration {
 
 	public static boolean isServer() {
-		return false;
+		return true;
 	}
 
 	public static int getPort() {

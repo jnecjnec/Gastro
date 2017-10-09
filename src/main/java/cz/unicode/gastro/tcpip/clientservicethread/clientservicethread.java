@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 
 public class clientservicethread extends Thread {
 
-    protected Socket myClientSocket;
     boolean f_RunThread = true;
     boolean f_waitForData = false;
     String completeMessage = "";
@@ -21,8 +20,11 @@ public class clientservicethread extends Thread {
     char ETX = '\3';
     char STX = '\2';
     ArrayList<clientservicethread> clientlist = null;
+    DataOutputStream out = null;
+    BufferedReader in = null;
+
+    protected Socket myClientSocket;
     protected IrecievedMessageListener listener = null;
-    String message = "a";
 
     public void setListener(IrecievedMessageListener pListener) {
         listener = pListener;
@@ -36,26 +38,18 @@ public class clientservicethread extends Thread {
     public clientservicethread(Socket s, ArrayList<clientservicethread> pClientlist) {
         myClientSocket = s;
         clientlist = pClientlist;
-        if (clientlist != null) {
-            clientlist.add(this);
-        }
     }
 
     public void setOutMessage(String pMessage) {
         //  dada to send
-        message = pMessage;
-        DataOutputStream out = null;
-        try {
-            out = new DataOutputStream(myClientSocket.getOutputStream());
-        } catch (IOException ex) {
-            Logger.getLogger(clientservicethread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        if (!message.isEmpty()) {
-
+        if (!pMessage.isEmpty()) {
             try {
-                out.writeBytes(STX + message + ETX);
-
-                //out.close();
+                out = new DataOutputStream(myClientSocket.getOutputStream());
+                try {
+                    out.writeBytes(STX + pMessage + ETX);
+                } catch (IOException ex) {
+                    Logger.getLogger(clientservicethread.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } catch (IOException ex) {
                 Logger.getLogger(clientservicethread.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -64,23 +58,36 @@ public class clientservicethread extends Thread {
 
     public void clientStop() {
         f_RunThread = false;
+        // Clean up
         try {
-            myClientSocket.close();
+            if (in != null) {
+                in.close();
+            }
+            if (out != null) {
+                out.close();
+            }
         } catch (IOException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+        if ((myClientSocket != null) && (!myClientSocket.isClosed())) {
+            try {
+                myClientSocket.close();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
         if (clientlist != null) {
             clientlist.remove(this);
         }
-        System.out.println("...Stopped");
+        System.out.println("...Client Stopped");
     }
 
     @Override
     public void run() {
-        // Obtain the input stream and the output stream for the socket
-        // A good practice is to encapsulate them with a BufferedReader
-        // and a PrintWriter as shown below.
-        BufferedReader in = null;
+        if (clientlist != null) {
+            clientlist.add(this);
+        }
 
         // Print out details of this connection
         System.out.println("Accepted Client Address - " + myClientSocket.getInetAddress().getHostName() + ":" + myClientSocket.getPort());
@@ -127,37 +134,13 @@ public class clientservicethread extends Thread {
                         }
                     }
                 } else // Process it
-                {
-                    if (f_waitForData) {
+                 if (f_waitForData) {
                         completeMessage += readedChar;
                     } else {
                         unexpectedMessage += readedChar;
                     }
-                }
-            } else {
-                //System.out.println("Client disconnected");
-                //f_RunThread = false;
             }
         }
-        // Clean up
-        try {
-            if (in != null) {
-                in.close();
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        if ((myClientSocket != null) && (!myClientSocket.isClosed())) {
-            try {
-                myClientSocket.close();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
-        if (clientlist != null) {
-            clientlist.remove(this);
-        }
-        System.out.println("...Stopped");
+        clientStop();
     }
 }

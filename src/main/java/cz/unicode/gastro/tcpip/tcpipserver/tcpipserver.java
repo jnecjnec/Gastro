@@ -28,7 +28,6 @@ public class tcpipserver extends Thread {
         }
     }
 
-
     public void sendMessageToAllClients(String pMessage) {
         for (clientservicethread cli : clientList) {
             cli.setOutMessage(pMessage);
@@ -36,28 +35,24 @@ public class tcpipserver extends Thread {
     }
 
     public void serverRun() {
-        try {
-            myServerSocket = new ServerSocket(port);
-        } catch (IOException ioe) {
-            System.out.println("Could not create server socket on port " + port + ". Quitting.");
-            System.exit(-1);
-        }
         start();
     }
 
     public void serverStop() {
         ServerOn = false;
-        try {
-            stopAllClients();
-            myServerSocket.close();
-            System.out.println("Server Stopped");
-        } catch (Exception ioe) {
-            System.out.println("Problem stopping server socket");
+        stopAllClients();
+        if ((myServerSocket != null) && (!myServerSocket.isClosed())) {
+            try {
+                myServerSocket.close();
+            } catch (Exception ioe) {
+                System.out.println("Problem stopping server socket");
+            }
         }
+        System.out.println("Server Stopped");
     }
-    
-    public void setListener(IrecievedMessageListener pListener){
-    	listener = pListener;
+
+    public void setListener(IrecievedMessageListener pListener) {
+        listener = pListener;
     }
 
     public tcpipserver() {
@@ -74,6 +69,11 @@ public class tcpipserver extends Thread {
 
     @Override
     public void run() {
+        try {
+            myServerSocket = new ServerSocket(port);
+        } catch (IOException ioe) {
+            System.out.println("Could not create server socket on port " + port + ". Quitting.");
+        }
         // Successfully created Server Socket. Now wait for connections.
         while (ServerOn) {
             // Accept incoming connections.
@@ -81,7 +81,7 @@ public class tcpipserver extends Thread {
             try {
                 clientSocket = myServerSocket.accept();
             } catch (Exception e) {
-                // TODO Auto-generated catch block
+                // pokud to ukoncim z venku atk aby to nehlasilo chybu
                 // e.printStackTrace();
             }
 
@@ -94,21 +94,13 @@ public class tcpipserver extends Thread {
             // MultiThreadedSocketServer accept multiple connections
             // simultaneously.
             // Start a Service thread
+            
             if ((ServerOn) && (clientSocket != null)) {
                 clientservicethread cliThread = new clientservicethread(clientSocket, clientList);
                 cliThread.setListener(listener);
                 cliThread.start();
             }
         }
-        stopAllClients();
-        if ((myServerSocket != null) && (!myServerSocket.isClosed())) {
-            try {
-                myServerSocket.close();
-            } catch (Exception ioe) {
-                System.out.println("Problem stopping server socket");
-            }
-        }
-        System.out.println("Server Stopped");
-
+        serverStop();
     }
 }
