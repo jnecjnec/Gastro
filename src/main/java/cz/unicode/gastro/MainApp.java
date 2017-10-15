@@ -23,6 +23,15 @@ import static javafx.application.Application.launch;
  */
 public class MainApp extends Application {
 
+        static Injector injector;
+        static tcpipserver server = null;
+        static tcpipclient client = null;
+        static Logger logger;
+        static gastroManager gastromanager = null;
+
+    
+     
+    
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
@@ -34,15 +43,29 @@ public class MainApp extends Application {
     }
 
     public static void main(String[] args) {
-
-        Injector injector = Guice.createInjector(new AppInjector());
-        Logger logger = injector.getInstance(Logger.class);
+         injector = Guice.createInjector(new AppInjector());
+       
+        logger = injector.getInstance(Logger.class);
+    
         logger.info("Start application");
+        
+         gastromanager = injector.getInstance(gastroManager.class);
+          
+        launch(args);
 
-        gastroManager gastromanager = injector.getInstance(gastroManager.class);
+    
+        if (configuration.isServer()) {
+            server.serverStop();
+        } else {
+            client.clientStop();
+        }
 
-        tcpipserver server = null;
-        tcpipclient client = null;
+        logger.info("Finish application");
+    }
+    
+    public void startService(boolean pServer){
+        
+       
         if (configuration.isServer()) {
             server = injector.getInstance(tcpipserver.class);
             server.setListener(gastromanager);
@@ -58,16 +81,7 @@ public class MainApp extends Application {
             ta.setUserId(123);
             gastromanager.addTable(ta);
         }
-
-        launch(args);
-
-        if (configuration.isServer()) {
-            server.serverStop();
-        } else {
-            client.clientStop();
-        }
-
-        logger.info("Finish application");
+        
     }
 
 }

@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 
 public class FXMLController implements Initializable {
     
@@ -13,9 +14,27 @@ public class FXMLController implements Initializable {
     private Label label;
     
     @FXML
+    private RadioButton radioButtonServer;
+    
+    @FXML
+    private RadioButton radioButtonClient;
+    
+    @FXML
     private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
+        startService(true);
         label.setText("Hello World!");
+    }
+    
+    @FXML
+    private void handleCheckBoxServer(ActionEvent event) {
+      radioButtonServer.selectedProperty().setValue(Boolean.TRUE);
+      radioButtonClient.selectedProperty().setValue(Boolean.FALSE);
+    }
+    
+    @FXML
+    private void handleCheckBoxClient(ActionEvent event) {
+       radioButtonServer.selectedProperty().setValue(Boolean.FALSE);
+        radioButtonClient.selectedProperty().setValue(Boolean.TRUE);
     }
     
     @Override
