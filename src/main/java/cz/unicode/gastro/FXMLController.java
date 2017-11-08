@@ -1,25 +1,26 @@
 package cz.unicode.gastro;
 
-import static cz.unicode.gastro.MainApp.injector;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import cz.unicode.gastro.gastroManager.gastroManager;
+import cz.unicode.gastro.injector.AppInjector;
 import cz.unicode.gastro.tcpip.tcpipclient.tcpipclient;
 import cz.unicode.gastro.tcpip.tcpipserver.tcpipserver;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.stage.WindowEvent;
+import org.slf4j.Logger;
 
 public class FXMLController implements Initializable {
 
+    Injector injector = null;
+    Logger logger = null;
     tcpipserver server = null;
-
     tcpipclient client = null;
-
     gastroManager gastromanager = null;
 
     @FXML
@@ -51,13 +52,15 @@ public class FXMLController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        gastromanager = injector.getInstance(gastroManager.class);
+       // gastromanager = injector.getInstance(gastroManager.class);
     }
 
-  
- 
-
     private void startService(boolean pServer) {
+        configuration.setIsServer(pServer);
+        injector = Guice.createInjector(new AppInjector());
+        logger = injector.getInstance(Logger.class);
+        gastromanager = injector.getInstance(gastroManager.class);
+
         if (pServer) {
             label.setText("Run as server");
             server = injector.getInstance(tcpipserver.class);
@@ -80,13 +83,13 @@ public class FXMLController implements Initializable {
         }
          */
     }
-    
-    public void shutdown () {
-       if (server != null){
-           server.serverStop();
-       } 
-       if (client != null){
-           client.clientStop();
-       }
+
+    public void shutdown() {
+        if (server != null) {
+            server.serverStop();
+        }
+        if (client != null) {
+            client.clientStop();
+        }
     }
 }

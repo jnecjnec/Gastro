@@ -23,8 +23,9 @@ public class tcpipserver extends Thread {
     ArrayList<clientservicethread> clientList = new ArrayList<clientservicethread>();
 
     private void stopAllClients() {
-        for (clientservicethread cli : clientList) {
-            cli.clientStop();
+        while (clientList.size() > 0)
+        {
+            clientList.get(0).clientStop();
         }
     }
 

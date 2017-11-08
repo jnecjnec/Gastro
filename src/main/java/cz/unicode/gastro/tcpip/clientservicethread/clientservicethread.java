@@ -63,6 +63,11 @@ public class clientservicethread extends Thread {
             if (in != null) {
                 in.close();
             }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        try {
             if (out != null) {
                 out.close();
             }
@@ -106,7 +111,9 @@ public class clientservicethread extends Thread {
             // read incoming byte
             int i = 0;
             try {
-                i = in.read();
+                if (in.ready()) {
+                    i = in.read();
+                }
             } catch (IOException ex) {
                 Logger.getLogger(clientservicethread.class.getName()).log(Level.SEVERE, null, ex);
                 f_RunThread = false;
@@ -134,13 +141,16 @@ public class clientservicethread extends Thread {
                         }
                     }
                 } else // Process it
-                 if (f_waitForData) {
+                {
+                    if (f_waitForData) {
                         completeMessage += readedChar;
                     } else {
                         unexpectedMessage += readedChar;
                     }
+                }
             }
         }
-        clientStop();
+         clientStop();
     }
+    
 }

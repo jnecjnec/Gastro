@@ -1,11 +1,5 @@
 package cz.unicode.gastro;
 
-import org.slf4j.Logger;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
-import cz.unicode.gastro.injector.AppInjector;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,8 +13,8 @@ import static javafx.application.Application.launch;
  */
 public class MainApp extends Application {
 
-    static Injector injector;
-    static Logger logger;
+    //static Injector injector;
+   // static Logger logger;
   
     @Override
     public void start(Stage stage) throws Exception {
@@ -38,11 +32,11 @@ public class MainApp extends Application {
     }
 
     public static void main(String[] args) {
-        injector = Guice.createInjector(new AppInjector());
+       // injector = Guice.createInjector(new AppInjector());
 
-        logger = injector.getInstance(Logger.class);
+       // logger = injector.getInstance(Logger.class);
 
-        logger.info("Start application");
+        //logger.info("Start application");
 
         launch(args);
 /*
@@ -52,7 +46,7 @@ public class MainApp extends Application {
             client.clientStop();
         }
 */
-        logger.info("Finish application");
+        //logger.info("Finish application");
         
     }
 
