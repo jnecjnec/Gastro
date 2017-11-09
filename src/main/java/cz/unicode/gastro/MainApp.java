@@ -1,11 +1,15 @@
 package cz.unicode.gastro;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import cz.unicode.gastro.injector.AppInjector;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import static javafx.application.Application.launch;
+import org.slf4j.Logger;
 
 /**
  * Gastro table manager
@@ -13,9 +17,9 @@ import static javafx.application.Application.launch;
  */
 public class MainApp extends Application {
 
-    //static Injector injector;
-   // static Logger logger;
-  
+    static Injector appinjector;
+    static Logger logger;
+
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Scene.fxml"));
@@ -24,31 +28,23 @@ public class MainApp extends Application {
         FXMLController controller = loader.getController();
 
         stage.setScene(scene);
-      
+
         stage.setOnHidden(e -> {
             controller.shutdown();
         });
+
         stage.show();
     }
 
     public static void main(String[] args) {
-       // injector = Guice.createInjector(new AppInjector());
-
-       // logger = injector.getInstance(Logger.class);
-
-        //logger.info("Start application");
+        appinjector = Guice.createInjector(new AppInjector());
+        logger = appinjector.getInstance(Logger.class);
+        logger.info("Start application");
 
         launch(args);
-/*
-        if (configuration.isServer()) {
-            server.serverStop();
-        } else {
-            client.clientStop();
-        }
-*/
-        //logger.info("Finish application");
-        
-    }
 
+        logger.info("Finish application");
+
+    }
 
 }

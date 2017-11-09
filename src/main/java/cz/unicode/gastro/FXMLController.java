@@ -1,9 +1,12 @@
 package cz.unicode.gastro;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import cz.unicode.gastro.gastroManager.gastroManager;
 import cz.unicode.gastro.injector.AppInjector;
+import cz.unicode.gastro.injector.GastroInjector;
 import cz.unicode.gastro.tcpip.tcpipclient.tcpipclient;
 import cz.unicode.gastro.tcpip.tcpipserver.tcpipserver;
 import java.net.URL;
@@ -18,10 +21,13 @@ import org.slf4j.Logger;
 public class FXMLController implements Initializable {
 
     Injector injector = null;
-    Logger logger = null;
     tcpipserver server = null;
     tcpipclient client = null;
     gastroManager gastromanager = null;
+    Logger logger = null;
+   
+   // @Inject
+    ///static Logger logger;
 
     @FXML
     private Label label;
@@ -52,12 +58,15 @@ public class FXMLController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-       // gastromanager = injector.getInstance(gastroManager.class);
+        // gastromanager = injector.getInstance(gastroManager.class);
     }
 
     private void startService(boolean pServer) {
         configuration.setIsServer(pServer);
-        injector = Guice.createInjector(new AppInjector());
+        
+        //injector = Guice.createInjector(new GastroInjector());
+        injector = Guice.createInjector(Modules.override(new AppInjector()).with(new GastroInjector()));
+       
         logger = injector.getInstance(Logger.class);
         gastromanager = injector.getInstance(gastroManager.class);
 
@@ -74,6 +83,7 @@ public class FXMLController implements Initializable {
             client.clientRun();
 
         }
+        
 
         /*
         if (!configuration.isServer()) {
@@ -85,11 +95,13 @@ public class FXMLController implements Initializable {
     }
 
     public void shutdown() {
+       
         if (server != null) {
             server.serverStop();
         }
         if (client != null) {
             client.clientStop();
         }
+        logger.info("Finish application");
     }
 }
