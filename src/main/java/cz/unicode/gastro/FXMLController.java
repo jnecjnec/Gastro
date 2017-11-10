@@ -1,33 +1,35 @@
 package cz.unicode.gastro;
 
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
+
+
+import cz.unicode.gastro.Injectors.AppInjector;
+import cz.unicode.gastro.Injectors.GastroInjector;
 import cz.unicode.gastro.gastroManager.gastroManager;
-import cz.unicode.gastro.injector.AppInjector;
-import cz.unicode.gastro.injector.GastroInjector;
+import cz.unicode.gastro.model.table.tableimpl;
 import cz.unicode.gastro.tcpip.tcpipclient.tcpipclient;
 import cz.unicode.gastro.tcpip.tcpipserver.tcpipserver;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import org.slf4j.Logger;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import org.slf4j.Logger;
+
 
 public class FXMLController implements Initializable {
 
-    Injector injector = null;
+    static Injector injector = null;
     tcpipserver server = null;
     tcpipclient client = null;
     gastroManager gastromanager = null;
     Logger logger = null;
-   
-   // @Inject
-    ///static Logger logger;
 
     @FXML
     private Label label;
@@ -59,14 +61,18 @@ public class FXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         // gastromanager = injector.getInstance(gastroManager.class);
+        label.setText("Initialize");
+        injector = Guice.createInjector(new AppInjector());
+        logger = injector.getInstance(Logger.class);
+        logger.info("Start application");
+
     }
 
     private void startService(boolean pServer) {
         configuration.setIsServer(pServer);
-        
-        //injector = Guice.createInjector(new GastroInjector());
+
         injector = Guice.createInjector(Modules.override(new AppInjector()).with(new GastroInjector()));
-       
+
         logger = injector.getInstance(Logger.class);
         gastromanager = injector.getInstance(gastroManager.class);
 
@@ -83,25 +89,23 @@ public class FXMLController implements Initializable {
             client.clientRun();
 
         }
-        
 
-        /*
-        if (!configuration.isServer()) {
+        if (configuration.isServer()) {
             tableimpl ta = new tableimpl();
             ta.setUserId(123);
             gastromanager.addTable(ta);
         }
-         */
+
     }
 
     public void shutdown() {
-       
+
         if (server != null) {
             server.serverStop();
         }
         if (client != null) {
             client.clientStop();
         }
-        logger.info("Finish application");
+        logger.info("Close application");
     }
 }

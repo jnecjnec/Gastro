@@ -3,12 +3,12 @@ package cz.unicode.gastro.gastroManager;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.slf4j.Logger;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -23,6 +23,7 @@ import cz.unicode.gastro.tcpip.message.message.messageType;
 import cz.unicode.gastro.tcpip.message.messageDecoderEncoder;
 import cz.unicode.gastro.tcpip.tcpipclient.tcpipclient;
 import cz.unicode.gastro.tcpip.tcpipserver.tcpipserver;
+import org.slf4j.Logger;
 
 @Singleton
 public class gastroManager implements IrecievedMessageListener {
@@ -151,6 +152,7 @@ public class gastroManager implements IrecievedMessageListener {
         if (result) {
             result = sendTableMessage(pTable, commandType.ctAdd);
         }
+        logger.info("ttt");
         return result;
     }
 

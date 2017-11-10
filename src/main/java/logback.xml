@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<property name="DEV_HOME" value="c:/install/logs" />
+	<property name="DEV_HOME" value="c:/Install/logs" />
 
 	<appender name="FILE_INFO"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.unicode.gastro.injector;
+package cz.unicode.gastro.Injectors;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.binder.AnnotatedBindingBuilder;
@@ -14,8 +14,6 @@ import cz.unicode.gastro.gastroManager.gastroManager;
 import cz.unicode.gastro.tcpip.tcpipclient.tcpipclient;
 import cz.unicode.gastro.tcpip.tcpipserver.tcpipserver;
 import java.sql.SQLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -25,8 +23,9 @@ public class GastroInjector extends AbstractModule {
 
     @Override
     protected void configure() {
-        //Logger aLogger = LoggerFactory.getLogger("cz.jnec");
-       // bind(Logger.class).toInstance(aLogger);
+       // Logger aLogger = LoggerFactory.getLogger("cz.jnec");
+        //bind(Logger.class).toInstance(aLogger);
+        
         ConnectionSource con = null;
         try {
             con = new JdbcConnectionSource(configuration.getDbPath());
@@ -35,7 +34,9 @@ public class GastroInjector extends AbstractModule {
             e1.printStackTrace();
         }
         bind(ConnectionSource.class).toInstance(con);
+        
         AnnotatedBindingBuilder<gastroManager> bind = bind(gastroManager.class);
+        
         tcpipserver aTcpipserver = new tcpipserver(configuration.getPort());
         bind(tcpipserver.class).toInstance(aTcpipserver);
 
