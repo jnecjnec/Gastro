@@ -64,7 +64,7 @@ public class FXMLController implements Initializable {
         label.setText("Initialize");
         injector = Guice.createInjector(new AppInjector());
         logger = injector.getInstance(Logger.class);
-        logger.info("Start application");
+        logger.info("Start scene");
 
     }
 
@@ -73,7 +73,7 @@ public class FXMLController implements Initializable {
 
         injector = Guice.createInjector(Modules.override(new AppInjector()).with(new GastroInjector()));
 
-        logger = injector.getInstance(Logger.class);
+       // logger = injector.getInstance(Logger.class);
         gastromanager = injector.getInstance(gastroManager.class);
 
         if (pServer) {
@@ -106,6 +106,6 @@ public class FXMLController implements Initializable {
         if (client != null) {
             client.clientStop();
         }
-        logger.info("Close application");
+        logger.info("Close scene");
     }
 }
