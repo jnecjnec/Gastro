@@ -50,6 +50,7 @@ public class MainApp extends Application {
         launch(args);
 
         logger.info("Finish application");
+        logger.error("sdafd");
     }
 
 }

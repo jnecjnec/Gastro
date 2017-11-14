@@ -90,9 +90,9 @@ public class FXMLController implements Initializable {
 
         }
 
-        if (configuration.isServer()) {
+        if (!configuration.isServer()) {
             tableimpl ta = new tableimpl();
-            ta.setUserId(123);
+            ta.setUserId(5555);
             gastromanager.addTable(ta);
         }
 

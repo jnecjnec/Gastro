@@ -47,7 +47,7 @@ public class gastroManager implements IrecievedMessageListener {
             daoTables = DaoManager.createDao(connectionSource, tableimpl.class);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error(e.getMessage());  
         }
 
         // if you need to create the 'accounts' table make this call
@@ -55,7 +55,7 @@ public class gastroManager implements IrecievedMessageListener {
             TableUtils.createTableIfNotExists(connectionSource, tableimpl.class);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+           logger.error(e.getMessage());  
         }
 
         // close the connection source
@@ -63,7 +63,7 @@ public class gastroManager implements IrecievedMessageListener {
             connectionSource.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+           logger.error(e.getMessage());  
         }
     }
 
@@ -80,7 +80,7 @@ public class gastroManager implements IrecievedMessageListener {
             result = true;
         } catch (SQLException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error(e.getMessage());  
         }
         return result;
     }
@@ -122,7 +122,7 @@ public class gastroManager implements IrecievedMessageListener {
                 }
                 break;
             default:
-                System.out.println("Unknown command");
+                logger.error("Unknown command: " + pMessage);
                 break;
         }
 
@@ -137,7 +137,7 @@ public class gastroManager implements IrecievedMessageListener {
                 break;
 
             default:
-                System.out.println("Unknown command");
+                logger.error("Unknown command: " + pMessage);
                 break;
         }
 
@@ -152,10 +152,11 @@ public class gastroManager implements IrecievedMessageListener {
         if (result) {
             result = sendTableMessage(pTable, commandType.ctAdd);
         }
-        logger.info("ttt");
+        logger.info("add table: " + pTable.getNumber());
         return result;
     }
 
+    @Override
     public void Message(String pMessage) {
         // TODO Auto-generated catch block
 

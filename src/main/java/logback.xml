@@ -54,7 +54,8 @@
 		</rollingPolicy>
 
 	</appender>
-
+        
+     
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -72,5 +73,6 @@
 		<appender-ref ref="FILE_DEBUG" />
 		<appender-ref ref="STDOUT" />
 	</root>
+      
 
 </configuration>
