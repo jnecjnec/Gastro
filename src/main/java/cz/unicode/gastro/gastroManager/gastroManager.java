@@ -36,6 +36,7 @@ public class gastroManager implements IrecievedMessageListener {
 
     @Inject
     tcpipclient client;
+    
 
     private Dao<tableimpl, String> daoTables = null;
 
@@ -129,7 +130,7 @@ public class gastroManager implements IrecievedMessageListener {
         return result;
     }
 
-    public boolean parseGastroMessage(gastroMessage pMessage) {
+    private boolean parseGastroMessage(gastroMessage pMessage) {
         boolean result = false;
         switch (pMessage.getMsgType()) {
             case gmtTable:
@@ -169,5 +170,9 @@ public class gastroManager implements IrecievedMessageListener {
         }
 
     }
+    
+    public Dao<tableimpl, String> getDaoTables(){
+return daoTables;
+        } 
 
 }

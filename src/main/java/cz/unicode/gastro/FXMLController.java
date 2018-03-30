@@ -1,8 +1,10 @@
 package cz.unicode.gastro;
 
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
+import com.j256.ormlite.dao.Dao.DaoObserver;
 
 
 import cz.unicode.gastro.Injectors.AppInjector;
@@ -13,6 +15,7 @@ import cz.unicode.gastro.tcpip.tcpipclient.tcpipclient;
 import cz.unicode.gastro.tcpip.tcpipserver.tcpipserver;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 
 import org.slf4j.Logger;
 
@@ -21,9 +24,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextField;
 
 
-public class FXMLController implements Initializable {
+public class FXMLController implements Initializable, DaoObserver {
 
     static Injector injector = null;
     tcpipserver server = null;
@@ -39,11 +44,25 @@ public class FXMLController implements Initializable {
 
     @FXML
     private RadioButton radioButtonClient;
+    
+    @FXML
+    private TextField LabelClient;
 
     @FXML
     private void handleButtonAction(ActionEvent event) {
         startService(radioButtonServer.selectedProperty().getValue());
     }
+    
+    @FXML
+    private void handleAddTableButtonAction(ActionEvent event) {
+        
+         if (!configuration.isServer()) {
+            tableimpl ta = new tableimpl();
+            ta.setUserId(5555);
+            gastromanager.addTable(ta);
+        }
+    }
+    
 
     @FXML
     private void handleCheckBoxServer(ActionEvent event) {
@@ -61,6 +80,7 @@ public class FXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         // gastromanager = injector.getInstance(gastroManager.class);
+      
         label.setText("Initialize");
         injector = Guice.createInjector(new AppInjector());
         logger = injector.getInstance(Logger.class);
@@ -70,11 +90,13 @@ public class FXMLController implements Initializable {
 
     private void startService(boolean pServer) {
         configuration.setIsServer(pServer);
+        configuration.setClientNumber(Integer.valueOf(LabelClient.getText())); 
 
         injector = Guice.createInjector(Modules.override(new AppInjector()).with(new GastroInjector()));
 
        // logger = injector.getInstance(Logger.class);
         gastromanager = injector.getInstance(gastroManager.class);
+        gastromanager.getDaoTables().registerObserver( this);
 
         if (pServer) {
             label.setText("Run as server");
@@ -88,13 +110,8 @@ public class FXMLController implements Initializable {
             client.setListener(gastromanager);
             client.clientRun();
 
-        }
-
-        if (!configuration.isServer()) {
-            tableimpl ta = new tableimpl();
-            ta.setUserId(5555);
-            gastromanager.addTable(ta);
-        }
+        } 
+       
 
     }
 
@@ -107,5 +124,21 @@ public class FXMLController implements Initializable {
             client.clientStop();
         }
         logger.info("Close scene");
+    }
+
+    
+
+    @Override
+    public void onChange() {
+              
+        Platform.runLater(new Runnable()
+        {
+                    @Override
+                    public void run()
+                    {
+                        label.setText("Change data"); 
+                    }
+                });      
+
     }
 }

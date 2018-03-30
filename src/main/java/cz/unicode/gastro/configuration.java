@@ -3,6 +3,8 @@ package cz.unicode.gastro;
 public class configuration {
 
     private static boolean FisServer = false;
+    private static int FclientNumber = 1;
+    
 
     public static boolean isServer() {
         return FisServer;
@@ -21,12 +23,16 @@ public class configuration {
         if (isServer()) {
             aDbPath = "jdbc:sqlite://C:/install/GastroTableManagerS.db";
         } else {
-            aDbPath = "jdbc:sqlite://C:/install/GastroTableManagerC.db";
+            aDbPath = "jdbc:sqlite://C:/install/GastroTableManagerC" + FclientNumber + ".db";
         }
         return aDbPath;
     }
 
     static void setIsServer(boolean pServer) {
         FisServer = pServer;
+    }
+    
+    static void setClientNumber(int pClientNumber) {
+        FclientNumber = pClientNumber;
     }
 }
